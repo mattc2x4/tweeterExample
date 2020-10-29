@@ -5,9 +5,23 @@ from .models import Tweet   #should use relative imports when inside of an app
 
 # Create your views here.
 def home_view(request, *args, **kwargs):
-    print(args, kwargs)
     # return HttpResponse("<h1>Hello World</h1>")
     return render(request,"pages/home.html", context={}, status=200)
+
+def tweet_list_view(request, *args, **kwargs):
+    """
+    REST API VIEW
+    Consume :0
+    return json data
+    """
+    qs = Tweet.objects.all()
+    tweets_list = [{"id": x.id, "content": x.content} for x in qs]
+    data = {
+        "isUser": False,
+        "response":tweets_list,
+    }
+    return JsonResponse(data)
+
 
 def tweet_detail_view(request,tweet_id, *args, **kwargs):
     """
@@ -23,10 +37,10 @@ def tweet_detail_view(request,tweet_id, *args, **kwargs):
     try:
         obj = Tweet.objects.get(id=tweet_id)
         data['content'] = obj.content
+        #data['image'] = obj.image
     except:
         data['message'] = "Not found"
         status = 404
-
 
     return JsonResponse(data, status=status)   # like json.dumps with content_type='application/json', not too familiar maybe check it out
     # return HttpResponse(f"<h1>Hello World \nTweet ID:{tweet_id} - {obj.content}</h1>")
