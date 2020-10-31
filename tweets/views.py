@@ -4,6 +4,8 @@ from django.http import HttpResponse, Http404, JsonResponse
 
 from .models import Tweet   #should use relative imports when inside of an app
 
+from .forms import TweetForm
+
 # Create your views here.
 def home_view(request, *args, **kwargs):
     # return HttpResponse("<h1>Hello World</h1>")
@@ -22,6 +24,15 @@ def tweet_list_view(request, *args, **kwargs):
         "response":tweets_list,
     }
     return JsonResponse(data)
+
+def tweet_create_view(request, *args, **kwargs):
+    form = TweetForm(request.POST or None)  #with or without data, sent through post method
+    if form.is_valid():
+        obj = form.save(commit=False)
+        #do other form related logic
+        obj.save()
+        form = TweetForm()
+    return render(request, 'components/form.html', context={"form": form})
 
 
 def tweet_detail_view(request,tweet_id, *args, **kwargs):
