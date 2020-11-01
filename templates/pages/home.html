@@ -17,7 +17,7 @@ this is amazing!!!!
         <form class='form' id='tweet-create-form' method='POST' action='/create-tweet'>
                 {% csrf_token %}
             <input type='hidden' value='/' name='next'  />
-            <textarea class='form-control' name='content' placeholder="Your Tweet"></textarea>
+            <textarea required='required' class='form-control' name='content' placeholder="Your Tweet"></textarea>
             <button class= 'btn btn-primary'>Tweet</button>
         </form>
     </div>
@@ -50,6 +50,7 @@ function handleTweetCreateFormDidSubmit(event){
             const newTweetElement = formatTweetElement(newTweet)
             const ogHtml = tweetsContainerElement.innerHTML
             tweetsContainerElement.innerHTML = newTweetElement + ogHtml //prepending new tweets to the top rather than the bottom
+            myForm.reset()
         }
     }
     xhr.send(myFormData)
