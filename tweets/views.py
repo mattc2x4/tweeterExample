@@ -1,11 +1,15 @@
 import random
 from django.shortcuts import render, redirect
+from django.conf import settings
 from django.http import HttpResponse, Http404, JsonResponse
+from django.utils.http import is_safe_url
 
 from .models import Tweet   #should use relative imports when inside of an app
 
 from .forms import TweetForm
 
+
+ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 # Create your views here.
 def home_view(request, *args, **kwargs):
     # return HttpResponse("<h1>Hello World</h1>")
@@ -18,7 +22,7 @@ def tweet_list_view(request, *args, **kwargs):
     return json data
     """
     qs = Tweet.objects.all()
-    tweets_list = [{"id": x.id, "content": x.content, 'likes': random.randint(0,25)} for x in qs]
+    tweets_list = [x.serialize() for x in qs]
     data = {
         "isUser": False,
         "response":tweets_list,
@@ -32,7 +36,9 @@ def tweet_create_view(request, *args, **kwargs):
         obj = form.save(commit=False)
         #do other form related logic
         obj.save()
-        if next_url !=None:
+        if request.is_ajax():
+            return JsonResponse(obj.serialize(), status=201) #status for created items
+        if next_url !=None and is_safe_url(next_url, ALLOWED_HOSTS):
             return redirect(next_url)
         form = TweetForm()
     return render(request, 'components/form.html', context={"form": form})
