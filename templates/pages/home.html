@@ -16,6 +16,7 @@ this is amazing!!!!
     <div class= 'col-md-4 mx-auto col-10'>
         <form class='form' id='tweet-create-form' method='POST' action='/create-tweet'>
                 {% csrf_token %}
+                <div class='d-none alert alert-danger' id= 'tweet-create-form-error'></div>
             <input type='hidden' value='/' name='next'  />
             <textarea required='required' class='form-control' name='content' placeholder="Your Tweet"></textarea>
             <button class= 'btn btn-primary'>Tweet</button>
@@ -28,6 +29,19 @@ this is amazing!!!!
 </div>
 
 <script>
+
+
+function handleTweetFormError(msg, display){
+    var myErrorDiv = document.getElementById("tweet-create-form-error")
+    if (display === true){
+        myErrorDiv.setAttribute("class", "d-block alert alert-danger")
+        myErrorDiv.innerText = msg
+    }
+    else{
+        myErrorDiv.setAttribute("class", "d-none alert alert-danger")
+    }
+}
+
 
 function handleTweetCreateFormDidSubmit(event){
     event.preventDefault()
@@ -45,6 +59,7 @@ function handleTweetCreateFormDidSubmit(event){
 
     xhr.onload = function() {
         if(xhr.status === 201){
+            handleTweetFormError("",false)
             const newTweet = xhr.response
             // const newTweetJson = JSON.parse(newTweet)
             const newTweetElement = formatTweetElement(newTweet)
@@ -52,6 +67,30 @@ function handleTweetCreateFormDidSubmit(event){
             tweetsContainerElement.innerHTML = newTweetElement + ogHtml //prepending new tweets to the top rather than the bottom
             myForm.reset()
         }
+        else if (xhr.status===400){
+            const errorJson = xhr.response
+            const contentError= errorJson.content
+            let contentErrorMsg;
+            if(contentError){
+                contentErrorMsg = contentError[0]
+                if(contentErrorMsg){
+                    handleTweetFormError(contentErrorMsg,true)
+                }
+                else{
+                    alert("an error occured. please try agian")
+                }
+            }
+            else{
+                alert("an error occured. please try agian")
+            }
+            console.log(errorJson)
+        }
+        else if (xhr.status===500){
+            alert("There was a erver error, please try again later.")
+        }
+    }
+    xhr.onerror = function(){
+        alert("an error occured.")
     }
     xhr.send(myFormData)
 
