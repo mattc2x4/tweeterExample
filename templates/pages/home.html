@@ -88,6 +88,10 @@ function handleTweetCreateFormDidSubmit(event){
         else if (xhr.status===500){
             alert("There was a erver error, please try again later.")
         }
+        else if (xhr.status===401){
+            alert("You must log in")
+            window.location.href = "/login"
+        }
     }
     xhr.onerror = function(){
         alert("an error occured.")
@@ -130,11 +134,12 @@ loadTweets(tweetsContainerElement)
 
 function LikeBtn(tweet) {
     return "<button class='btn btn-primary btn-sm' onclick=handleDidLike(" + 
-    tweet.id + "," + tweet.likes + ")>" + tweet.likes + " Likes</button>"
+    tweet.id + "," + tweet.likes +  ")>" + tweet.likes + " Likes</button>"
 }
 
-function handleDidLike(tweet_id,currentCount){
+function handleDidLike(tweet_id, currentCount ){
     console.log(tweet_id,currentCount)
+    // tweet.likes+=1
     return
 }
 

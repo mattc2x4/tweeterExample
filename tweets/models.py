@@ -11,6 +11,7 @@ class Tweet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  #many users have many tweets tweet only has one user, cascade: owner user deleted, all tweets deleted.
     content = models.TextField(blank=True,null=True)
     image = models.FileField(upload_to='images/',blank=True,null=True)
+    likes = models.IntegerField(default=0)
 
     # likes = models.IntegerField(blank=True,null=True)
 
@@ -24,5 +25,6 @@ class Tweet(models.Model):
         return {
             "id": self.id,
             "content": self.content,
-            'likes': random.randint(0,100),
+            # 'likes': random.randint(0,100),
+            "likes" : self.likes
         }

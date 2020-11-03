@@ -9,7 +9,7 @@ class TweetForm(forms.ModelForm):
     class Meta:
         #describes the form
         model = Tweet
-        fields =  ['content']
+        fields =  ['content', 'likes']
 
     def clean_content(self):
         content = self.cleaned_data.get("content")
