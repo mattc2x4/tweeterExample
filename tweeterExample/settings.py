@@ -32,6 +32,8 @@ ALLOWED_HOSTS = ['127.0.0.1']   #or .mydomain.com
 
 LOGIN_URL = "/login"
 
+MAX_TWEET_LENGTH = 240
+
 
 # Application definition
 
