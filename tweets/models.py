@@ -13,6 +13,7 @@ class TweetLike(models.Model):
 
 class Tweet(models.Model):
     # id = modles.AutoField(primary_key=True)
+    parent = models.ForeignKey("self",null=True, on_delete=models.SET_NULL) #if parent deleted this field will be set to null
     user = models.ForeignKey(User, on_delete=models.CASCADE)  #many users have many tweets tweet only has one user, cascade: owner user deleted, all tweets deleted.
     content = models.TextField(blank=True,null=True)
     image = models.FileField(upload_to='images/',blank=True,null=True)

@@ -12,7 +12,11 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from .models import Tweet   #should use relative imports when inside of an app
 from .forms import TweetForm
-from .serializers import TweetSerializer,TweetActionSerializer
+from .serializers import (
+    TweetSerializer,
+    TweetActionSerializer,
+    TweetCreateSerializer,
+)
 
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
@@ -26,7 +30,7 @@ def home_view(request, *args, **kwargs):
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def tweet_create_view(request, *args, **kwargs):
-    serializer = TweetSerializer(data=request.POST or None)
+    serializer = TweetCreateSerializer(data=request.POST or None)
     if serializer.is_valid(raise_exception=True):
         serializer.save(user=request.user)
         return Response(serializer.data, status=200)
@@ -74,6 +78,7 @@ def tweet_action_view(request, *args, **kwargs):
         data = serializer.validated_data
         tweet_id = data.get("id")
         action = data.get("action")
+        parent_content = data.get("content")
         qs = Tweet.objects.filter(id=tweet_id)
         if not qs.exists():
             return Response({}, status=404)
@@ -85,11 +90,17 @@ def tweet_action_view(request, *args, **kwargs):
             obj.likes.add(request.user)
             serializer = TweetSerializer(obj)
             return Response(serializer.data, status=200)
-        elif action == "unlike" or request.user in obj.likes.all():
+        elif action == "unlike" or (request.user in obj.likes.all() and action != "retweet"):
             print("UN liking obj")
             obj.likes.remove(request.user)
         elif action=="retweet":
-            #todo
+            new_tweet = Tweet.objects.create(
+                user=request.user,
+                parent=obj,
+                content=parent_content,
+            )
+            serializer = TweetSerializer(new_tweet)
+            return Response(serializer.data, status=200)
             pass
 
 
