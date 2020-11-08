@@ -68,7 +68,7 @@ def tweet_action_view(request, *args, **kwargs):
     Action options are: like, unlike, retweet
     doesnt have to be owner of tweet to do
     '''
-    serializer = TweetActionSerializer(request.POST)
+    serializer = TweetActionSerializer(data=request.POST)
     if serializer.is_valid(raise_exception=True):
         data = serializer.validated_data
         tweet_id = data.get("id")
