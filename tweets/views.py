@@ -83,6 +83,8 @@ def tweet_action_view(request, *args, **kwargs):
         if action =="like" and request.user not in obj.likes.all():
             print("liking obj")
             obj.likes.add(request.user)
+            serializer = TweetSerializer(obj)
+            return Response(serializer.data, status=200)
         elif action == "unlike" or request.user in obj.likes.all():
             print("UN liking obj")
             obj.likes.remove(request.user)
@@ -91,7 +93,7 @@ def tweet_action_view(request, *args, **kwargs):
             pass
 
 
-    return Response({"message": "Tweet Liked"}, status=200)
+    return Response({"message": "Tweet Action Performed"}, status=200)
 
 
     
