@@ -68,7 +68,8 @@ def tweet_action_view(request, *args, **kwargs):
     Action options are: like, unlike, retweet
     doesnt have to be owner of tweet to do
     '''
-    serializer = TweetActionSerializer(data=request.POST)
+    print(request.POST,request.data)
+    serializer = TweetActionSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         data = serializer.validated_data
         tweet_id = data.get("id")
@@ -79,9 +80,11 @@ def tweet_action_view(request, *args, **kwargs):
         if not qs.exists():
             return Response({"message": "You cannot like this tweet"}, status=401)
         obj = qs.first()
-        if action =="like":
+        if action =="like" and request.user not in obj.likes.all():
+            print("liking obj")
             obj.likes.add(request.user)
-        elif action == "unlike":
+        elif action == "unlike" or request.user in obj.likes.all():
+            print("UN liking obj")
             obj.likes.remove(request.user)
         elif action=="retweet":
             #todo
