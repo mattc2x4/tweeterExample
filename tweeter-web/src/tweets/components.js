@@ -24,7 +24,7 @@ export function TweetsComponent(props) {
                 <button type='submit' className='btn btn-primary my-3'>Tweet</button>
             </form>
         </div>
-        <TweetsList newTweets={newTweets}/>
+        <TweetsList newTweets={newTweets} />
     </div>
 }
 
@@ -34,12 +34,12 @@ export function TweetsList(props) {
     const [tweetsInit, setTweetsInit] = useState([])
     const [tweets, setTweets] = useState([])
     // setTweetsInit([...props.newTweets].concat(tweetsInit))
-    useEffect(()=> {
+    useEffect(() => {
         const final = [...props.newTweets].concat(tweetsInit)
-        if (final.length!==tweets.length){
+        if (final.length !== tweets.length) {
             setTweets(final)
         }
-    }, [props.newTweets,tweets,tweetsInit])
+    }, [props.newTweets, tweets, tweetsInit])
 
     useEffect(() => {
         //do lookup
