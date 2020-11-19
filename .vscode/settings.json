@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "/home/mattc/.local/share/virtualenvs/tweeterExample-GaOyzc0y/bin/python"
+    "python.pythonPath": "/home/mattc/.local/share/virtualenvs/tweeterExample-GaOyzc0y/bin/python",
+    "python.formatting.provider": "autopep8"
 }
