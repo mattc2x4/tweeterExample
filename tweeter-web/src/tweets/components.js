@@ -63,7 +63,7 @@ export function TweetsList(props) {
                     alert("There was an error")
                 }
             }
-            apiTweetList(handleTweetListLookup)
+            apiTweetList(null, handleTweetListLookup)
         }
     }, [tweetsInit, tweetsDidSet, setTweetsDidSet])
 
