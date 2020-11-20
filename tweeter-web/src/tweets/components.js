@@ -65,8 +65,21 @@ export function TweetsList(props) {
             apiTweetList(handleTweetListLookup)
         }
     }, [tweetsInit, tweetsDidSet, setTweetsDidSet])
+
+    const handleDidRetweet = (newTweet) => {
+        const updateTweetsInit = [...tweetsInit]
+        updateTweetsInit.unshift(newTweet)
+        setTweetsInit(updateTweetsInit)
+
+        const updateFinalTweets = [...tweets]
+        updateFinalTweets.unshift(tweets)
+        setTweets(updateFinalTweets)
+    }
     return tweets.map((item, index) => {
-        return <Tweet tweet={item} className='my-5 py-5 border bg-white text-dark' key={`${index}-{item.id}`} />
+        return <Tweet
+            tweet={item}
+            didRetweet={handleDidRetweet}
+            className='my-5 py-5 border bg-white text-dark' key={`${index}-{item.id}`} />
     })
 }
 
@@ -79,8 +92,8 @@ export function ActionBtn(props) {
 
     const handleActionBackendEvent = (response, status) => {
         console.log(response, status)
-        if (status === 200 || status === 201  && didPerformAction) {
-            didPerformAction(response)
+        if ((status === 200 || status === 201) && didPerformAction) {
+            didPerformAction(response, status)
         }
     }
 
@@ -105,12 +118,19 @@ export function ParentTweet(props) {
 }
 
 export function Tweet(props) {
-    const { tweet } = props
+    const { tweet, didRetweet } = props
     const [actionTweet, setActionTweet] = useState(props.tweet ? props.tweet : null)
     const className = props.className ? props.className : 'col-10 mx-auto col-md-6'
 
-    const handlePerformAction = (newActionTweet) => {
-        setActionTweet(newActionTweet)
+    const handlePerformAction = (newActionTweet, status) => {
+        if (status === 200) {
+            setActionTweet(newActionTweet)
+        } else if (status === 201) {
+            if (didRetweet) {
+                didRetweet(newActionTweet)
+            }
+        }
+
     }
 
 
